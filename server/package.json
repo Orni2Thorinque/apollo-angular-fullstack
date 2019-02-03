@@ -6,8 +6,7 @@
   "scripts": {
     "start": "node dist/main",
     "build:dev": "webpack --config  webpack.development.js",
-    "nodemon-start": "nodemon src/index.js",
-    "start:ci": "node src/index.js"
+    "build:prod": "webpack --config  webpack.production.js"
   },
   "author": "",
   "license": "ISC",
