@@ -1,11 +1,10 @@
 import { ApolloServer } from 'apollo-server';
 import typeDefs from './schema';
 import resolvers from './resolvers';
+import { LaunchAPI } from './datasources/launch';
+
 const { createStore } = require('./utils');
-
-const LaunchAPI = require('./datasources/launch');
 const UserAPI = require('./datasources/user');
-
 const store = createStore();
 
 const server = new ApolloServer({

@@ -1,19 +1,19 @@
-const { RESTDataSource } = require('apollo-datasource-rest');
+import { RESTDataSource } from 'apollo-datasource-rest';
 
-class LaunchAPI extends RESTDataSource {
+export class LaunchAPI extends RESTDataSource {
   constructor() {
     super();
     this.baseURL = 'https://api.spacexdata.com/v2/';
   }
 
-  async getAllLaunches() {
+  public async getAllLaunches() {
     console.log(`🚀 getAllLaunches !`);
     const response = await this.get('launches');
     console.log(`🚀 getAllLaunches response !`, response);
     return Array.isArray(response) ? response.map(launch => this.launchReducer(launch)) : [];
   }
 
-  launchReducer(launch) {
+  public launchReducer(launch: any) {
     console.log(`🚀 launchReducer !`, launch);
     return {
       id: launch.flight_number || 0,
@@ -32,14 +32,12 @@ class LaunchAPI extends RESTDataSource {
     };
   }
 
-  async getLaunchById({ launchId }) {
+  public async getLaunchById({ launchId }: any) {
     const response = await this.get('launches', { flight_number: launchId });
     return this.launchReducer(response[0]);
   }
 
-  getLaunchesByIds({ launchIds }) {
-    return Promise.all(launchIds.map(launchId => this.getLaunchById({ launchId })));
+  public getLaunchesByIds({ launchIds }: any) {
+    return Promise.all(launchIds.map((launchId: any) => this.getLaunchById({ launchId })));
   }
 }
-
-module.exports = LaunchAPI;
