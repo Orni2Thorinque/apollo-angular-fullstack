@@ -1,27 +1,29 @@
 import { ApolloServer } from 'apollo-server';
-import typeDefs from './schema';
+import * as dotenv from 'dotenv';
+import { getDatasources } from './datasources/root.datasource';
 import resolvers from './resolvers';
-import { LaunchAPI } from './datasources/launch';
+import typeDefs from './schema';
 
-const { createStore } = require('./utils');
-const UserAPI = require('./datasources/user');
-const store = createStore();
-
-const server = new ApolloServer({
-  typeDefs,
-  dataSources: () => ({
-    launchAPI: new LaunchAPI(),
-    userAPI: new UserAPI({ store }),
-  }),
-  resolvers: resolvers,
-});
-
-server.listen({ port: 4000 }).then(({ url }) => console.log(`🚀 App running at ${url}`));
-
-console.log('Hello World!');
-
-// Hot Module Replacement
 if (module.hot) {
   module.hot.accept();
   module.hot.dispose(() => console.log('Module disposed. '));
+}
+
+try {
+  startServer();
+} catch (e) {
+  console.error(e);
+  process.exit();
+}
+
+function startServer() {
+  dotenv.config();
+
+  const server = new ApolloServer({
+    typeDefs,
+    dataSources: getDatasources,
+    resolvers: resolvers,
+  });
+
+  server.listen({ port: 4000 }).then(({ url }) => console.log(`🚀 App running at ${url}`));
 }

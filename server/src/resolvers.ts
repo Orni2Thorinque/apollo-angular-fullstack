@@ -24,6 +24,8 @@ export default {
     },
     launch: (_: any, { id }: any, { dataSources }: any) => dataSources.launchAPI.getLaunchById({ launchId: id }),
     me: async (_: any, __: any, { dataSources }: any) => dataSources.userAPI.findOrCreateUser(),
+    contracts: (_: any, __: any, { dataSources }: any) => dataSources.cycloAPI.getAllContracts(),
+    stations: (_: any, __: any, { dataSources }: any) => dataSources.cycloAPI.getAllStations(),
   },
   Launch: {
     isBooked: async (launch: any, _: any, { dataSources }: any) => dataSources.userAPI.isBookedOnLaunch({ launchId: launch.id }),
