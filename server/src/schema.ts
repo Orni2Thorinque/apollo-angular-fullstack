@@ -34,9 +34,16 @@ export enum PatchSize {
 
 export default gql`
   type Query {
-    launches: [Launch]!
+    launches(pageSize: Int, after: String): LaunchConnection! # Paginated query
     launch(id: ID!): Launch
     me: User
+  }
+
+  # Pagination wrapper type
+  type LaunchConnection {
+    cursor: String!
+    hasMore: Boolean!
+    launches: [Launch]!
   }
 
   type Launch {
@@ -45,12 +52,19 @@ export default gql`
     mission: Mission
     rocket: Rocket
     isBooked: Boolean!
+    medias: Medias!
   }
 
   type Rocket {
     id: ID!
     name: String
     type: String
+  }
+
+  type Medias {
+    wikipedia: String
+    youtube: String
+    flicker: [String]
   }
 
   type User {

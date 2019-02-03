@@ -29,6 +29,11 @@ export class LaunchAPI extends RESTDataSource {
         name: launch.rocket.rocket_name,
         type: launch.rocket.rocket_type,
       },
+      medias: {
+        wikipedia: launch.links.wikipedia,
+        youtube: launch.links.video_link,
+        flicker: launch.links.flickr_images,
+      },
     };
   }
 
