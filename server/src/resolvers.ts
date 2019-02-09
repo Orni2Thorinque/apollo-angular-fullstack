@@ -1,13 +1,19 @@
 const { paginateResults } = require('./utils');
 
 export default {
+  // Query resolvers //
   Query: {
+    launch: (_: any, { id }: any, { dataSources }: any) => dataSources.launchAPI.getLaunchById({ launchId: id }),
+    me: async (_: any, __: any, { dataSources }: any) => dataSources.userAPI.findOrCreateUser(),
+    contracts: (_: any, __: any, { dataSources }: any) => dataSources.cycloAPI.getAllContracts(),
+    stations: (_: any, __: any, { dataSources }: any) => dataSources.cycloAPI.getAllStations(),
+    station: (_: any, { contract }: any, { dataSources }: any) => dataSources.cycloAPI.getStationByContract({ contractName: contract }),
+    directions: (_: any, { olat, olng, dlat, dlng }: any, { dataSources }: any) => dataSources.googleMapsAPI.getDirectionsByCoordinates({ olat: olat, olng: olng, dlat: dlat, dlng: dlng }),
     //   launches: async (_: any, __: any, { dataSources }: any): Promise<any> => dataSources.launchAPI.getAllLaunches(),
     launches: async (_: any, { pageSize = 20, after }: any, { dataSources }: any) => {
       const allLaunches = await dataSources.launchAPI.getAllLaunches();
       // we want these in reverse chronological order
       allLaunches.reverse();
-
       const launches = paginateResults({
         after,
         pageSize,
@@ -22,11 +28,8 @@ export default {
         hasMore: launches.length ? launches[launches.length - 1].cursor !== allLaunches[allLaunches.length - 1].cursor : false,
       };
     },
-    launch: (_: any, { id }: any, { dataSources }: any) => dataSources.launchAPI.getLaunchById({ launchId: id }),
-    me: async (_: any, __: any, { dataSources }: any) => dataSources.userAPI.findOrCreateUser(),
-    contracts: (_: any, __: any, { dataSources }: any) => dataSources.cycloAPI.getAllContracts(),
-    stations: (_: any, __: any, { dataSources }: any) => dataSources.cycloAPI.getAllStations(),
   },
+  // Type resolvers //
   Launch: {
     isBooked: async (launch: any, _: any, { dataSources }: any) => dataSources.userAPI.isBookedOnLaunch({ launchId: launch.id }),
   },
