@@ -7,14 +7,13 @@ export class LaunchAPI extends RESTDataSource {
   }
 
   public async getAllLaunches() {
-    console.log(`🚀 getAllLaunches !`);
+    console.log(`🚀\tgetAllLaunches !`);
     const response = await this.get('launches');
-    console.log(`🚀 getAllLaunches response !`, response);
     return Array.isArray(response) ? response.map(launch => this.launchReducer(launch)) : [];
   }
 
   public launchReducer(launch: any) {
-    console.log(`🚀 launchReducer !`, launch);
+    console.log(`🚀\tlaunchReducer !`, launch);
     return {
       id: launch.flight_number || 0,
       cursor: `${launch.launch_date_unix}`,
