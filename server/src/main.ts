@@ -1,8 +1,10 @@
 import { ApolloServer } from 'apollo-server';
+import { ApolloServer as ApolloServerLambda } from 'apollo-server-lambda';
 import * as dotenv from 'dotenv';
 import { getDatasources } from './datasources/root.datasource';
 import resolvers from './resolvers';
 import typeDefs from './schema';
+
 
 if (module.hot) {
   module.hot.accept();
@@ -18,12 +20,29 @@ try {
 
 function startServer() {
   dotenv.config();
+  let server: any | ApolloServer | ApolloServerLambda;
 
-  const server = new ApolloServer({
-    typeDefs,
-    dataSources: getDatasources,
-    resolvers: resolvers,
-  });
+  console.log(`🚀\tStarting server mode ${process.env.NODE_ENV}`);
 
-  server.listen({ port: 4000 }).then(({ url }) => console.log(`🚀 App running at ${url}`));
+  switch (process.env.NODE_ENV) {
+    case 'development':
+      server = new ApolloServer({
+        typeDefs,
+        dataSources: getDatasources,
+        resolvers: resolvers,
+      });
+
+      (<ApolloServer>server).listen({ port: 4000 }).then(({ url }) => console.log(`🚀\tApp running at ${url}`));
+      break;
+
+    case 'production':
+      server = new ApolloServerLambda({
+        typeDefs,
+        dataSources: getDatasources,
+        resolvers: resolvers,
+      });
+
+      exports.graphqlHandler = server.createHandler();
+      break;
+  }
 }
