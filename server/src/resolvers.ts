@@ -6,9 +6,16 @@ export default {
     launch: (_: any, { id }: any, { dataSources }: any) => dataSources.launchAPI.getLaunchById({ launchId: id }),
     me: async (_: any, __: any, { dataSources }: any) => dataSources.userAPI.findOrCreateUser(),
     contracts: (_: any, __: any, { dataSources }: any) => dataSources.cycloAPI.getAllContracts(),
+    contractStations: (_: any, { contract }: any, { dataSources }: any) => dataSources.cycloAPI.getStationByContract({ contractName: contract }),
+    station: (_: any, { stationId, contract }: any, { dataSources }: any) => dataSources.cycloAPI.getStationByNumber({ stationNumber: stationId, contractName: contract }),
     stations: (_: any, __: any, { dataSources }: any) => dataSources.cycloAPI.getAllStations(),
-    station: (_: any, { contract }: any, { dataSources }: any) => dataSources.cycloAPI.getStationByContract({ contractName: contract }),
+
     directions: (_: any, { olat, olng, dlat, dlng }: any, { dataSources }: any) => dataSources.googleMapsAPI.getDirectionsByCoordinates({ olat: olat, olng: olng, dlat: dlat, dlng: dlng }),
+    distanceTo: (_: any, { address, targets, transportMode }: any, { dataSources }: any) => dataSources.googleMapsAPI.getDistanceMatrix({ address: address, targets: JSON.stringify(targets), transportMode: transportMode }),
+
+    // distanceToStation: (_: any, { address }: any, { dataSources }: any) => dataSources.googleMapsAPI.getDistanceToStations({ address: address }),
+
+    location: (_: any, { address }: any, { dataSources }: any) => dataSources.googleMapsAPI.getPositionByAddress({ address }),
     //   launches: async (_: any, __: any, { dataSources }: any): Promise<any> => dataSources.launchAPI.getAllLaunches(),
     launches: async (_: any, { pageSize = 20, after }: any, { dataSources }: any) => {
       const allLaunches = await dataSources.launchAPI.getAllLaunches();

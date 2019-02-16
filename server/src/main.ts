@@ -32,7 +32,7 @@ function startServer() {
         resolvers: resolvers,
       });
 
-      (<ApolloServer>server).listen({ port: 4000 }).then(({ url }) => console.log(`🚀\tApp running at ${url}`));
+      (<ApolloServer>server).listen({ port: 4300 }).then(({ url }) => console.log(`🚀\tApp running at ${url}`));
       break;
 
     case 'production':

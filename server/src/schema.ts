@@ -1,13 +1,20 @@
 import { gql } from 'apollo-server';
-import { Position } from './schema';
 
 export default gql`
   type Query {
+    # Cyclo query
     contracts: [Contract]
     stations: [Station]
-    station(contract: String!): [Station]
-    directions( olat: Float!, olng: Float!, dlat: Float!, dlng: Float!): DirectionSummary
- 
+    station(stationId: Int!, contract: String): Station
+    contractStations(contract: String!): [Station]
+    distanceTo(address: String!, targets: [PositionInput!]!, transportMode: TransportMode): DistanceMatrix
+    distanceToStation(address: String!): DistanceSummary
+
+    # GMaps query
+    directions(olat: Float!, olng: Float!, dlat: Float!, dlng: Float!): DirectionSummary
+    location(address: String!): [GeocodeSummary]
+
+    # SpaceX query
     launches(pageSize: Int, after: String): LaunchConnection! # Paginated query
     launch(id: ID!): Launch
     me: User
@@ -32,10 +39,15 @@ export default gql`
     bike_stands: Int
     available_bike_stands: Int
     available_bikes: Int
-    last_update: Int
+    last_update: Float
   }
 
   type Position {
+    lat: Float!
+    lng: Float!
+  }
+
+  input PositionInput {
     lat: Float!
     lng: Float!
   }
@@ -49,6 +61,59 @@ export default gql`
     startLocationText: String
     endLocation: Position
     endLocationText: String
+    steps: [Step]
+  }
+
+  type Step {
+    distance: Int
+    distanceText: String
+    duration: Int
+    durationText: String
+    startLocation: Position
+    endLocation: Position
+    htmlInstruction: String
+    travelMode: String
+    polyline: String
+  }
+
+  type GeocodeSummary {
+    addressFragments: [GeocodeFragment]
+    formatedAddress: String
+    geometry: GeocodeGeometry
+    partialMatch: Boolean
+    placeId: String
+    types: [String]
+  }
+
+  type GeocodeFragment {
+    longText: String
+    shortText: String
+    types: [String]
+  }
+
+  type GeocodeGeometry {
+    location: Position
+    locationType: String
+  }
+
+  type DistanceMatrix {
+    destinationAddresses: [String]
+    originAddresses: [String]
+    infos: [DistanceMatrixInfo]
+  }
+
+  type DistanceMatrixInfo {
+    distanceTexts: [String]
+    distances: [Int]
+    durationTexts: [String]
+    durations: [Int]
+  }
+
+  enum TransportMode {
+    BICYCLING
+    DRIVING
+    TRANSIT
+    WALKING
   }
 
   # Pagination wrapper type
@@ -94,6 +159,7 @@ export default gql`
     SMALL
     LARGE
   }
+
   # MUTATIONS ___________________
   type Mutation {
     bookTrips(launchIds: [ID]!): TripUpdateResponse!
@@ -107,73 +173,3 @@ export default gql`
     launches: [Launch]
   }
 `;
-
-export interface Launch {
-  id: number;
-  site: String;
-  mission: Mission;
-  rocket: Rocket;
-  isBooked: Boolean;
-}
-
-export interface Rocket {
-  id: number;
-  name: String;
-  type: String;
-}
-
-export interface User {
-  id: number;
-  email: String;
-  trips: Launch;
-}
-
-export interface Mission {
-  name: String;
-  missionPatchSmall?: string;
-  missionPatchLarge?: string;
-  // missionPatch(size: PatchSize): String;
-}
-
-export enum PatchSize {
-  SMALL,
-  LARGE,
-}
-
-export interface Contract {
-  name: string;
-  commercial_name: string;
-  country_code: string;
-  cities: string[];
-}
-
-export interface Station {
-  number: number;
-  contract_name: string;
-  name: string;
-  address: string;
-  position: Position;
-  banking: boolean;
-  bonus: boolean;
-  status: string;
-  bike_stands: number;
-  available_bike_stands: number;
-  available_bikes: number;
-  last_update: number;
-}
-
-export interface Position {
-  lat: number;
-  lng: number;
-}
-
-export interface DirectionSummary {
-  distance: number;
-  distanceText: string;
-  duration: number;
-  durationText: string;
-  startLocation: Position;
-  startLocationText: string;
-  endLocation: Position;
-  endLocationText: string;
-}
