@@ -1,0 +1,74 @@
+.container {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.action-menu {
+  right: 5px;
+  bottom: 10px;
+}
+
+.map-type-toggle {
+  left: 5px;
+  bottom: 10px;
+}
+
+.marker-info-wrapper {
+  padding: 10px 10px;
+}
+
+.spacer {
+  margin-bottom: 1px solid #757575;
+  width: 90%;
+}
+
+.indent-left {
+  margin-left: 10px;
+}
+
+.translate-up {
+  animation: slide-up 200ms forwards ease-in;
+}
+
+.translate-down {
+  animation: slide-down 200ms forwards ease-out;
+}
+
+.map-type-toggle {
+  left: 5px;
+  position: absolute;
+  height: 48px;
+}
+
+::ng-deep .mat-tab-group {
+  background-color: white;
+  position: absolute;
+  width: 100%;
+}
+
+::ng-deep .mat-button-toggle {
+  white-space: nowrap;
+  position: relative;
+  height: 48px;
+  background: rgb(255, 193, 7);
+}
+
+@keyframes slide-down {
+  from {
+    top: -30px;
+  }
+
+  to {
+    top: 0px;
+  }
+}
+@keyframes slide-up {
+  from {
+    bottom: -30px;
+  }
+
+  to {
+    bottom: 10px;
+  }
+}

@@ -1,12 +1,11 @@
-import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+// import * as dotenv from 'dotenv';
+import 'zone.js/dist/zone'; // Included with Angular CLI.
+import { CycloMapModule } from './app/components/cyclo-map.module';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+// dotenv.config();
+// export const GMAP_API_KEY = process.env.GOOGLE_MAPS_API_KEY;
 
-if (environment.production) {
-  enableProdMode();
-}
-
-platformBrowserDynamic().bootstrapModule(AppModule)
+platformBrowserDynamic()
+  .bootstrapModule(CycloMapModule)
   .catch(err => console.error(err));
