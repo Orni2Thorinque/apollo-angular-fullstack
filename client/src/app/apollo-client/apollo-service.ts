@@ -1,59 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import { ApolloQueryResult } from 'apollo-client';
-import gql from 'graphql-tag';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StationModel } from '../models/station-model';
-import { Contract, GeocodeSummary, Station } from '../types/types';
-
-const CONTRACTS = gql`
-  query Contracts {
-    contracts {
-      name
-      cities
-      commercialName: commercial_name
-      countryCode: country_code
-    }
-  }
-`;
-
-const STATIONS_BY_CONTRACT = gql`
-  query StationByContract($contractName: String!) {
-    contractStations(contract: $contractName) {
-      number
-      name
-      address
-      position {
-        lat
-        lng
-      }
-      status
-      banking
-      bike_stands
-      available_bike_stands
-      available_bikes
-      last_update
-      bonus
-    }
-  }
-`;
-
-const LOCATION_BY_ADDRESS = gql`
-  query LocationByAdddress($address: String!) {
-    location(address: $address) {
-      formatedAddress
-      geometry {
-        location {
-          lat
-          lng
-        }
-        locationType
-      }
-      partialMatch
-    }
-  }
-`;
+import { Contract, DirectionSummary, GeocodeSummary, Position, Station } from '../types/types';
+import { CONTRACTS, DIRECTIONS_BY_COORDINATES, LOCATION_BY_ADDRESS, STATIONS_BY_CONTRACT } from './apollo-queries';
 
 export interface StationInfos {
   contracts: Array<Contract>;
@@ -117,45 +69,28 @@ export class ApolloService {
         )
       );
   }
+
+  /**
+   * Get directions between two locations
+   * @param {Position} startLocation given start location
+   * @param {Position} endLocation given end location
+   * @return {Observable<DirectionSummary>} observable over contracts
+   */
+  public queryDirectionsByCoordinates(startLocation: Position, endLocation: Position): Observable<DirectionSummary> {
+    return this.apollo
+      .watchQuery<{ directions: DirectionSummary }>({
+        query: DIRECTIONS_BY_COORDINATES, //
+        variables: { olat: startLocation.lat, olng: startLocation.lng, dlat: endLocation.lat, dlng: endLocation.lng },
+      }) //
+      .valueChanges //
+      .pipe(
+        map((
+          result: ApolloQueryResult<{ directions: DirectionSummary }> //
+        ) =>
+          result.data && result.data.directions //
+            ? result.data.directions
+            : null
+        )
+      );
+  }
 }
-
-// const StationsQuery = gql`;
-//   query Contracts {
-//     contracts {
-//       name
-//       commercial_name
-//     }
-//     stations {
-//       number
-//       contract_name
-//       position {
-//         lat
-//         lng
-//       }
-//       available_bike_stands
-//       available_bikes
-//       address
-//       last_update
-//     }
-//   }
-// `;
-
-// public async queryStations(): Promise<StationInfos> {
-//   const data: StationInfos = {
-//     contracts: null,
-//     stations: null,
-//   };
-
-//   await this.apollo.watchQuery({ query: ContractsQuery }).valueChanges.subscribe(
-//     (result: ApolloQueryResult<StationInfos>) => {
-//       data.contracts = result.data.contracts;
-//       data.stations = result.data.stations;
-//     },
-//     () => {
-//       data.contracts = [];
-//       data.stations = [];
-//     }
-//   );
-
-//   return data;
-// }

@@ -6,6 +6,11 @@ export const DEFAULT_LOCATION: Position = {
   lng: 2.339607,
 };
 
+export const DEFAULT_FOCUS_ZOOM = 13;
+export const DEFAULT_START_ZOOM = 8;
+export const DEFAUL_MAP_TYPE = 'terrain';
+export const DEFAULT_RENDERING_DELAY_PER_STATION = 40;
+
 export function getWindowDimensions(): Array<number> {
   return [window.innerWidth, window.innerHeight - 5];
 }
@@ -79,7 +84,7 @@ export function getTakeIcon(station: StationModel): string {
  * @param station given station
  */
 export function getReturnIcon(station: StationModel): string {
-  switch (station.availableBikesStatus) {
+  switch (station.availableBikeStandsStatus) {
     case 'OK':
       return 'RETURN_OK';
     case 'WARN':

@@ -14,13 +14,24 @@
   bottom: 10px;
 }
 
+.contract-tabs {
+  box-shadow: 0 3px 5px -1px rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.14), 0 1px 18px 0 rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+.directions-panel {
+  position: absolute;
+  width: 100%;
+  z-index: 1;
+}
+
 .marker-info-wrapper {
   padding: 10px 10px;
 }
 
 .spacer {
-  margin-bottom: 1px solid #757575;
-  width: 90%;
+  border-top: 1px solid #7575753d;
+  width: 100%;
 }
 
 .indent-left {
@@ -33,6 +44,18 @@
 
 .translate-down {
   animation: slide-down 200ms forwards ease-out;
+}
+
+.translate-directions-down {
+  animation: slide-directions-down 300ms forwards ease-out;
+}
+
+.expand {
+  animation: expand 300ms forwards ease-out;
+}
+
+.translate-toggle-down {
+  animation: slide-toggle-down 200ms forwards ease-out;
 }
 
 .map-type-toggle {
@@ -63,6 +86,7 @@
     top: 0px;
   }
 }
+
 @keyframes slide-up {
   from {
     bottom: -30px;
@@ -70,5 +94,33 @@
 
   to {
     bottom: 10px;
+  }
+}
+
+@keyframes slide-directions-down {
+  from {
+    top: -30px;
+  }
+
+  to {
+    top: 48px;
+  }
+}
+
+@keyframes slide-toggle-down {
+  from {
+    bottom: 10px;
+  }
+  to {
+    bottom: -70px;
+  }
+}
+
+@keyframes expand {
+  from {
+    height: 0px;
+  }
+  to {
+    top: 48px;
   }
 }

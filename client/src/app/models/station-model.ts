@@ -39,8 +39,8 @@ export class StationModel {
   }
 
   private computeStatus() {
-    this.availableBikesStatus = this.availableBikes > 3 ? 'OK' : this.availableBikes > 1 ? 'WARN' : 'CRITICAL';
-    this.availableBikeStandsStatus = this.availableBikeStands > 3 ? 'OK' : this.availableBikeStands > 1 ? 'WARN' : 'CRITICAL';
+    this.availableBikesStatus = this.availableBikes > 3 ? 'OK' : this.availableBikes > 0 ? 'WARN' : 'CRITICAL';
+    this.availableBikeStandsStatus = this.availableBikeStands > 3 ? 'OK' : this.availableBikeStands > 0 ? 'WARN' : 'CRITICAL';
     this.lastUpdateStatus = this.computeUpdateFreshness(this.lastUpdate);
     this.overviewStatus = this.computeGlobalStatus();
   }
@@ -51,9 +51,14 @@ export class StationModel {
   }
 
   private computeGlobalStatus(): StationStatus {
-    if (this.status !== 'OPEN') return 'CRITICAL';
-    if ((this.availableBikesStatus === 'WARN' && this.availableBikeStandsStatus === 'CRITICAL') || (this.availableBikesStatus === 'CRITICAL' && this.availableBikeStandsStatus === 'WARN')) return 'WARN';
-    if (this.availableBikesStatus === 'CRITICAL' || this.availableBikeStandsStatus === 'CRITICAL') return 'CRITICAL';
-    return 'OK';
+    if (this.status !== 'OPEN') {
+      return 'CRITICAL';
+    } else if (this.availableBikesStatus === 'CRITICAL' && this.availableBikeStandsStatus === 'CRITICAL') {
+      return 'CRITICAL';
+    } else if (this.availableBikesStatus === 'CRITICAL' || this.availableBikeStandsStatus === 'CRITICAL') {
+      return 'WARN';
+    } else {
+      return 'OK';
+    }
   }
 }
