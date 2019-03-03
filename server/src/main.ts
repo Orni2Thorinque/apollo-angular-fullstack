@@ -4,7 +4,7 @@ import * as dotenv from 'dotenv';
 import { getDatasources } from './datasources/root.datasource';
 import resolvers from './resolvers';
 import typeDefs from './schema';
-
+import { MemcachedCache } from 'apollo-server-cache-memcached';
 
 if (module.hot) {
   module.hot.accept();
@@ -40,6 +40,7 @@ function startServer() {
         typeDefs,
         dataSources: getDatasources,
         resolvers: resolvers,
+        cache: new MemcachedCache(['localhost:4300'], { retries: 10, retry: 10000 }),
       });
 
       exports.graphqlHandler = server.createHandler();

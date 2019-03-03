@@ -4,20 +4,15 @@ export default gql`
   type Query {
     # Cyclo query
     contracts: [Contract]
+    contractFavorite: [ContractFavorite]
     stations: [Station]
     station(stationId: Int!, contract: String): Station
     contractStations(contract: String!): [Station]
     distanceTo(address: String!, targets: [PositionInput!]!, transportMode: TransportMode): DistanceMatrix
-    # distanceToStation(address: String!): DistanceSummary
 
     # GMaps query
     directions(olat: Float!, olng: Float!, dlat: Float!, dlng: Float!): DirectionSummary
     location(address: String!): [GeocodeSummary]
-
-    # SpaceX query
-    launches(pageSize: Int, after: String): LaunchConnection! # Paginated query
-    launch(id: ID!): Launch
-    me: User
   }
 
   type Contract {
@@ -116,60 +111,13 @@ export default gql`
     WALKING
   }
 
-  # Pagination wrapper type
-  type LaunchConnection {
-    cursor: String!
-    hasMore: Boolean!
-    launches: [Launch]!
-  }
-
-  type Launch {
-    id: ID!
-    site: String
-    mission: Mission
-    rocket: Rocket
-    isBooked: Boolean!
-    medias: Medias!
-  }
-
-  type Rocket {
-    id: ID!
-    name: String
-    type: String
-  }
-
-  type Medias {
-    wikipedia: String
-    youtube: String
-    flicker: [String]
-  }
-
-  type User {
-    id: ID!
-    email: String!
-    trips: [Launch]!
-  }
-
-  type Mission {
-    name: String
-    missionPatch(size: PatchSize): String
-  }
-
-  enum PatchSize {
-    SMALL
-    LARGE
-  }
-
   # MUTATIONS ___________________
   type Mutation {
-    bookTrips(launchIds: [ID]!): TripUpdateResponse!
-    cancelTrip(launchId: ID!): TripUpdateResponse!
-    login(email: String): String # login token
+    contractFavorite(name: String!, isFavorite: Boolean!): Boolean
   }
 
-  type TripUpdateResponse {
-    success: Boolean!
-    message: String
-    launches: [Launch]
+  type ContractFavorite {
+    name: String!
+    favorite: Boolean
   }
 `;

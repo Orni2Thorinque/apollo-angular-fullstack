@@ -1,35 +1,3 @@
-export interface Launch {
-  id: number;
-  site: String;
-  mission: Mission;
-  rocket: Rocket;
-  isBooked: Boolean;
-}
-
-export interface Rocket {
-  id: number;
-  name: String;
-  type: String;
-}
-
-export interface User {
-  id: number;
-  email: String;
-  trips: Launch;
-}
-
-export interface Mission {
-  name: String;
-  missionPatchSmall?: string;
-  missionPatchLarge?: string;
-  // missionPatch(size: PatchSize): String;
-}
-
-export enum PatchSize {
-  SMALL,
-  LARGE,
-}
-
 export interface Contract {
   name: string;
   commercial_name: string;
