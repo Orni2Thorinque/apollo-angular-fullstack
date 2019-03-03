@@ -8,7 +8,7 @@ export default gql`
     station(stationId: Int!, contract: String): Station
     contractStations(contract: String!): [Station]
     distanceTo(address: String!, targets: [PositionInput!]!, transportMode: TransportMode): DistanceMatrix
-    distanceToStation(address: String!): DistanceSummary
+    # distanceToStation(address: String!): DistanceSummary
 
     # GMaps query
     directions(olat: Float!, olng: Float!, dlat: Float!, dlng: Float!): DirectionSummary
