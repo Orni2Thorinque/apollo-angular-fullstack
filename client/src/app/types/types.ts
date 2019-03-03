@@ -37,6 +37,11 @@ export interface Contract {
   cities: string[];
 }
 
+export interface ContractFavorite {
+  name: string;
+  favorite: boolean;
+}
+
 export type StationStatus = 'OK' | 'CRITICAL' | 'WARN';
 
 export interface Station {

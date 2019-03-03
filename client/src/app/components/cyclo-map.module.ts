@@ -22,7 +22,6 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     MaterialModule,
     NgxFloatButtonModule,
     NgxSpinnerModule,
-
   ],
   providers: [GoogleMapsAPIWrapper, InfoWindowManager, MarkerManager],
   bootstrap: [CycloMapComponent],

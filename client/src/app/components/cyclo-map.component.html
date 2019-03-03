@@ -58,7 +58,7 @@
   <mat-tab *ngFor="let contract of contracts" [label]="contract.name">
     <ng-template mat-tab-label>
       <span class="flag-icon flag-icon-squared" [ngClass]="('flag-icon-' + contract.countryCode).toLowerCase()"></span>
-      &nbsp; {{ contract.name }}
+      &nbsp; {{ contract.name }} &nbsp; <button mat-icon-button (click)="toggleFavorite($event, contract)" style="zoom: 0.7"><mat-icon [svgIcon]="favoriteIcon(contract)" style="fill:rgb(255, 193, 7)"></mat-icon></button>
     </ng-template>
   </mat-tab>
 </mat-tab-group>

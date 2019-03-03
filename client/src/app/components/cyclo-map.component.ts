@@ -4,7 +4,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ApolloService } from '../apollo-client/apollo-service';
 import { StationModel } from '../models/station-model';
-import { Contract, GeocodeSummary, Position, Station, DirectionSummary, Step } from '../types/types';
+import { Contract, GeocodeSummary, Position, Station, DirectionSummary, Step, ContractFavorite } from '../types/types';
 import { DEFAULT_FOCUS_ZOOM, DEFAULT_LOCATION, DEFAULT_RENDERING_DELAY_PER_STATION, DEFAULT_START_ZOOM, DEFAUL_MAP_TYPE, getBankIcon, getBikeIcon, getOverviewIcon, getReturnIcon, getTakeIcon, getWindowDimensions, nou } from './cyclo-map.utils';
 import { PolyMouseEvent, InfoWindowManager, AgmInfoWindow } from '@agm/core';
 
@@ -34,6 +34,8 @@ export class CycloMapComponent implements OnInit, AfterViewInit {
   get contracts(): Array<Contract> {
     return this._contracts ? this._contracts : [];
   }
+
+  private _favorites: Array<ContractFavorite>;
 
   public contextMode: 'DIRECTIONS' | 'CONTRACTS' | 'NORMAL';
   public windowDims: Array<number>;
@@ -98,6 +100,7 @@ export class CycloMapComponent implements OnInit, AfterViewInit {
 
     // Load contracts
     this.apollo.queryContracts().subscribe((contracts: Array<Contract>) => (this._contracts = contracts));
+    this.apollo.queryFavoriteContracts().subscribe((favorites: Array<ContractFavorite>) => (this._favorites = favorites));
   }
 
   ngAfterViewInit() {
@@ -115,6 +118,14 @@ export class CycloMapComponent implements OnInit, AfterViewInit {
       this.contextMode = this.contextMode === 'NORMAL' ? 'CONTRACTS' : 'NORMAL';
       this.endpoints = [];
     }, 500);
+  }
+
+  // Handle contracts favorite toggling
+  public toggleFavorite(event: Event, contract: Contract): void {
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+
+    this.setContractFavorite(contract);
   }
 
   // Handle map type toggling
@@ -214,8 +225,27 @@ export class CycloMapComponent implements OnInit, AfterViewInit {
 
     this.apollo.queryStationByContract(contract).subscribe(stations => {
       this._stations = stations;
-      this.endpoints = [this._stations[0], this._stations[1]];
       setTimeout(() => this.spinner.hide(), DEFAULT_RENDERING_DELAY_PER_STATION * this._stations.length);
+    });
+  }
+
+  private setContractFavorite(contract: Contract): void {
+    const index =
+      this._favorites && this._favorites.length //
+        ? this._favorites.findIndex((c: ContractFavorite) => c.name === contract.name)
+        : -1;
+
+    const favorite = index > -1 && this._favorites.some((c: ContractFavorite) => c.name === contract.name && c.favorite);
+
+    this.apollo.mutateFavoriteContract(contract.name, !favorite).subscribe((result: boolean) => {
+      if (index > -1) {
+        this._favorites[index].favorite = !favorite;
+      } else {
+        this._favorites.push({
+          name: contract.name,
+          favorite: !favorite,
+        });
+      }
     });
   }
 
@@ -267,6 +297,19 @@ export class CycloMapComponent implements OnInit, AfterViewInit {
     }
   }
 
+  /**
+   * Computes contract favorite icon value
+   * @param {Contract} contract given contract
+   * @returns {'FAVORITE' | 'UNFAVORITE'} svg icon name
+   */
+  public favoriteIcon(contract: Contract): 'FAVORITE' | 'UNFAVORITE' {
+    return this._favorites && //
+    this._favorites.length && //
+      this._favorites.some((c: ContractFavorite) => c.name === contract.name && c.favorite)
+      ? 'FAVORITE'
+      : 'UNFAVORITE';
+  }
+
   private initIconRegistry(): void {
     this.iconRegistry
       .addSvgIcon('PLACE_OK', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/baseline_ok.svg'))
@@ -293,6 +336,9 @@ export class CycloMapComponent implements OnInit, AfterViewInit {
       .addSvgIcon('MAP_TERRAIN', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/map_terrain.svg'))
       .addSvgIcon('MAP_ROAD', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/map_road.svg'))
       .addSvgIcon('MAP_SATELLITE', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/map_satelite.svg'))
+
+      .addSvgIcon('FAVORITE', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/favorite.svg'))
+      .addSvgIcon('UNFAVORITE', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/unfavorite.svg'))
 
       .addSvgIcon('DIRECTION_START', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/direction_start.svg'))
       .addSvgIcon('DIRECTION_END', this.sanitizer.bypassSecurityTrustResourceUrl('/assets/direction_end.svg'));

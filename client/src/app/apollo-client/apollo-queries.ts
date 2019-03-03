@@ -9,6 +9,12 @@ export const FRAGMENTS = {
   `,
 };
 
+export const SUBMIT_CONTRACT_FAVORITE = gql`
+  mutation SubmitContractFavorite($name: String!, $isFavorite: Boolean!) {
+    contractFavorite(name: $name, isFavorite: $isFavorite)
+  }
+`;
+
 export const CONTRACTS = gql`
   query Contracts {
     contracts {
@@ -16,6 +22,15 @@ export const CONTRACTS = gql`
       cities
       commercialName: commercial_name
       countryCode: country_code
+    }
+  }
+`;
+
+export const CONTRACT_FAVORITES = gql`
+  query ContractFavorites {
+    contractFavorite {
+      name
+      favorite
     }
   }
 `;

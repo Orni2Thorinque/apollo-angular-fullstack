@@ -4,8 +4,8 @@ import { ApolloQueryResult } from 'apollo-client';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StationModel } from '../models/station-model';
-import { Contract, DirectionSummary, GeocodeSummary, Position, Station } from '../types/types';
-import { CONTRACTS, DIRECTIONS_BY_COORDINATES, LOCATION_BY_ADDRESS, STATIONS_BY_CONTRACT } from './apollo-queries';
+import { Contract, DirectionSummary, GeocodeSummary, Position, Station, ContractFavorite } from '../types/types';
+import { CONTRACTS, DIRECTIONS_BY_COORDINATES, LOCATION_BY_ADDRESS, STATIONS_BY_CONTRACT, CONTRACT_FAVORITES, SUBMIT_CONTRACT_FAVORITE } from './apollo-queries';
 
 export interface StationInfos {
   contracts: Array<Contract>;
@@ -31,6 +31,31 @@ export class ApolloService {
           )
         )
       );
+  }
+
+  /**
+   * Get all contracts
+   * @return {Observable<Array<ContractFavorite>>} observable over contracts
+   */
+  public queryFavoriteContracts(): Observable<Array<ContractFavorite>> {
+    return this.apollo
+      .watchQuery<{ contractFavorite: Array<ContractFavorite> }>({ query: CONTRACT_FAVORITES }) //
+      .valueChanges //
+      .pipe(map((result: ApolloQueryResult<{ contractFavorite: Array<ContractFavorite> }>) => result.data.contractFavorite));
+  }
+
+  /**
+   * Get all contracts
+   * @return {Observable<Array<ContractFavorite>>} observable over contracts
+   */
+  public mutateFavoriteContract(name: string, favorite: boolean): Observable<boolean> {
+    return this.apollo.mutate({
+      mutation: SUBMIT_CONTRACT_FAVORITE,
+      variables: {
+        name,
+        isFavorite: favorite,
+      },
+    });
   }
 
   /**
